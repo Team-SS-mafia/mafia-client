@@ -1,0 +1,5 @@
+1. node js 설치
+2. npm install
+3. npm i next-images
+4. npm install react
+5. npm install yarn
