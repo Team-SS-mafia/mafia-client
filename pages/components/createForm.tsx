@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import styles from '../../styles/User.module.css'; // CSS 모듈 import
+import { useRouter } from 'next/router';
 
 const _createForm: React.FC = () => {
+  const router = useRouter();
+
   // 회원가입 
   const createuser = () => {
-    window.location.href="http://localhost:3000/login";
+    // TODO 회원가입 통신
+    router.push('../login')
   };
   
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {

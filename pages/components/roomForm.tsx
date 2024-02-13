@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Room.module.css'; // CSS 모듈 import
 import Table from "react-bootstrap/Table";
+import { useRouter } from 'next/router';
+
 const _roomForm: React.FC = () => {
+  const router = useRouter();
+
   // 게임 시작 핸들러
   const gameStart = () => {
-    window.location.href="http://localhost:3000/game";
+    router.push('../game')
+    // window.location.href="http://localhost:3000/game";
     console.log("게임 시작");
  };
    
