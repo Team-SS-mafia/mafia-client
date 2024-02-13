@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import styles from '../../styles/Home.module.css'; // CSS 모듈 import
+import { useRouter } from 'next/router';
 
 const _mainText: React.FC = () => {
+  const router = useRouter();
+
   // 비로그인 시 입장 이후 로그인 창
   // 로그인 시 게임 로비 입장 
   const startJoin = () => {
-    window.location.href="http://localhost:3000/login"
+    // TODO    
+    // if login
+    router.push('../login')
+    
+    // else
+    
     console.log('입장!');
   };
 
