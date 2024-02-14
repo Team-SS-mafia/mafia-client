@@ -33,7 +33,7 @@ const _lobby: React.FC = () => {
   };
 
   return (
-    <div className={[styles.lobby_wrapper, styles.noDrag].join(" ")}>
+    <div className={[styles.lobby_wrapper, styles.noDrag, styles.inbox_msg].join(" ")}>
       {renderOtherComponent()}
       {!showOtherComponent && (
         <div className={[styles.lobby_wrapper, styles.noDrag].join(" ")}>
@@ -48,17 +48,17 @@ const _lobby: React.FC = () => {
             <tbody>
               <tr onClick={roomClick}>
                 <th>1</th>
-                <th>a</th>
-                <th>1/8</th>
+                <th>Joan Andrews</th>
+                <th>8/8</th>
               </tr>
               <tr>
                 <th>2</th>
-                <th>b</th>
+                <th>Phil Aaron</th>
                 <th>1/8</th>
               </tr>
               <tr>
                 <th>3</th>
-                <th>c</th>
+                <th>Chris Baker</th>
                 <th>1/8</th>
               </tr>
             </tbody>

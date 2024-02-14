@@ -33,33 +33,43 @@ const _roomForm: React.FC <{ showOtherComponent: boolean; setShowOtherComponent:
     <div className={[styles.lobby_wrapper, styles.noDrag].join(" ")}>
       <Table striped bordered hover width={'600px'}>
           <thead>
-            <tr>
-                <th>참가자 (6/8)</th>
-            </tr>
+            <div className={styles.lobby_wrapper}>
+              <tr>
+                  <h2>Users (8/8)</h2>
+              </tr>
+            </div>
           </thead>
           <tbody>
             <tr>
-              <th>a</th>
+              <th>Joan Andrews</th>
             </tr>
             <tr>
-              <th>b</th>
+              <th>Jose Anderson</th>
             </tr>
             <tr>
-              <th>c</th>
+              <th>Phil Aaron</th>
             </tr>
             <tr>
-              <th>d</th>
+              <th>Samatha Brown</th>
             </tr>
             <tr>
-              <th>e</th>
+              <th>Chris Baker</th>
             </tr>
             <tr>
-              <th>f</th>
+              <th>Kristin Blues</th>
+            </tr>
+            <tr>
+              <th>Adam Carter</th>
+            </tr>
+            <tr>
+              <th>Greg Campbell</th>
             </tr>
         </tbody>
       </Table>
-      <button className={styles.lobby_form_button} onClick={gameStart}>게임 시작</button>
-      <button className={styles.lobby_form_button} onClick={gameQuit}>나가기</button>
+      <div>
+        <button className={styles.lobby_form_button} onClick={gameStart} style={{margin:'10px'}}>게임 시작</button>
+        <button className={styles.lobby_form_button} onClick={gameQuit} style={{margin:'10px'}}>나가기</button>
+      </div>
     </div>
   );
 };
