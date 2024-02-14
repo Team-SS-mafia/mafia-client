@@ -3,19 +3,21 @@ import styles from '../../styles/Room.module.css'; // CSS 모듈 import
 import Table from "react-bootstrap/Table";
 import { useRouter } from 'next/router';
 
-const _roomForm: React.FC = () => {
+
+const _roomForm: React.FC <{ showOtherComponent: boolean; setShowOtherComponent: React.Dispatch<React.SetStateAction<boolean>> }> 
+= ({ showOtherComponent, setShowOtherComponent }) => {
   const router = useRouter();
 
   // 게임 시작 핸들러
   const gameStart = () => {
     router.push('../game')
-    // window.location.href="http://localhost:3000/game";
     console.log("게임 시작");
  };
    
  // 게임 나가기 핸들러
   const gameQuit = () => {
-    window.location.href="http://localhost:3000/lobby";
+    setShowOtherComponent(false);
+    router.push('../lobby')
     console.log("게임 나가기");
  };
 
