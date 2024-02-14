@@ -8,7 +8,7 @@ const _lobby: React.FC = () => {
   const roomClick = () =>{
     // TODO >> IF 방 입장에 문제가 없다면
     setShowOtherComponent(true);
-
+    
     console.log("방 클릭");
   }
 
@@ -26,7 +26,7 @@ const _lobby: React.FC = () => {
   // 다른 컴포넌트를 렌더링하는 함수
   const renderOtherComponent = () => {
     if (showOtherComponent) {
-      return <_roomForm/>;
+      return <_roomForm showOtherComponent={showOtherComponent} setShowOtherComponent={setShowOtherComponent}/>;
     } else {
       return null; // 다른 컴포넌트를 렌더링하지 않음
     }
