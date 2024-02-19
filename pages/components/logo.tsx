@@ -4,10 +4,13 @@ import Logo from '../../Images/mafia.jpg'; // Logo
 import Logo_reverse from '../../Images/mafia_reverse.jpg'; // LogoReverse
 import styles from '../../styles/Home.module.css'; // CSS 모듈 import
 import { useRouter } from 'next/router';
+import { getSocket } from '../utils/ClientSocket'; // Socket.ts 파일에서 getSocket 함수를 import
+import { getRoom, setRoom } from '../utils/Room'; // Socket.ts 파일에서 getSocket 함수를 import
 
 const _logo: React.FC = () => {
-  const router = useRouter();
 
+  const router = useRouter();
+  const socket = getSocket(); // Socket 가져오는 함수 사용
   // 이미지 상태 관리
   const [isHovered, setIsHovered] = useState(false);
 
@@ -22,7 +25,8 @@ const _logo: React.FC = () => {
   };
 
   const logoClick = () => {
-    router.push('../')
+    router.push('../');
+    socket.emit('quitRoom', getRoom());
   };
 
   return (

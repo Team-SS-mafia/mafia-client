@@ -5,7 +5,7 @@ import police_reverse from '../../Images/police_reverse.png'; // LogoReverse
 import doctor_reverse from '../../Images/doctor_reverse.png'; // LogoReverse
 import Image from 'next/image'; // next/image 패키지 import
 
-const Rollodex: React.FC = () => {
+const _userListForm: React.FC = () => {
   return (
     <div className={`${styles.colMd8} ${styles.colMdOffset2} ${styles.bootstrap} ${styles.snippets} ${styles.bootdeys} ${styles.inbox_msg}`}>
       <div className={`${styles.widgetContainer} ${styles.scrollable} ${styles.list} ${styles.rollodex}`}>
@@ -52,4 +52,4 @@ const Rollodex: React.FC = () => {
   );
 };
 
-export default Rollodex;
+export default _userListForm;
