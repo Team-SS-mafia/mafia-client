@@ -2,75 +2,110 @@ import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Room.module.css'; // CSS 모듈 import
 import Table from "react-bootstrap/Table";
 import { useRouter } from 'next/router';
+import { getSocket } from '../utils/ClientSocket'; // Socket.ts 파일에서 getSocket 함수를 import
+import { getRoom, setRoom } from '../utils/Room'; 
 
-
-const _roomForm: React.FC <{ showOtherComponent: boolean; setShowOtherComponent: React.Dispatch<React.SetStateAction<boolean>> }> 
-= ({ showOtherComponent, setShowOtherComponent }) => {
+const _roomForm: React.FC = () => {
   const router = useRouter();
+  const socket = getSocket(); 
+
 
   // 게임 시작 핸들러
   const gameStart = () => {
-    router.push('../game')
-    console.log("게임 시작");
+    socket.emit('startGame', getRoom());
  };
    
  // 게임 나가기 핸들러
-  const gameQuit = () => {
-    setShowOtherComponent(false);
-    router.push('../lobby')
-    console.log("게임 나가기");
+  const gameQuit = async () => {
+    socket.emit('quitRoom', getRoom());
+    setRoom(0);
+    setIsSuDo(false);
+    await router.push('../lobby');
  };
 
-  // 방 참가자 리로드 요소
-  // 변화가 있으면? useEffect에서? 동작을 정의한다?
-  var userName = "";
-  
+  // suDo 권한을 가진 사용자 여부
+  // 일단 모두 다 true 줘서 게임 시작 보이게 해둠.
+  const [isSuDo, setIsSuDo] = useState<boolean>(true);
+
+ // html 매칭 에러
+ // 렌더링 후 상태 업데이트하는 방식
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  const [userList, setUserList] = useState<string[]>([]);
+
+  const [userCount, setUserCount] = useState<number>();
+
   useEffect(() => {
-    console.log("실행할 내용, 아래 []로 변수가 들어감.");
-  }, [userName]);
+    setMounted(true);
+    console.log(getRoom());
+    
+    // 들어가자마자 reload socket 통신
+    // TODO
+    socket.emit('joinUser', getRoom());
+
+    // joinUser로 받아온 것을 user list 갱신
+    socket.on('setUsers', (users: string[], count: number) => {
+      setUserList(users);
+      setUserCount(count);
+
+      if (count == 1){
+        setIsSuDo(true);
+      }
+    });
+
+    // 이후에 user list 갱신
+    socket.on('reloadUser', (func: string, user: string, roomId: number, count: number, admin: Boolean) => {
+      if (func === 'join' && roomId === getRoom()){
+        setUserList(prevUsers => [...prevUsers, user]);
+        setUserCount(count);
+      }
+      else if (func === 'quit' && roomId === getRoom()){
+        setUserList(prevUsers => prevUsers.filter(existingUser => existingUser !== user));
+        setUserCount(count);
+
+        // if (admin){
+        //   setIsSuDo(true);
+        // }
+      }
+    });
+
+    // gameStart socket
+    socket.on('startGame', (roomId: number) => {
+      if (roomId === getRoom()){
+        router.push('../game');
+      }
+    });
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
+    return () => {
+      socket.off('reloadUser');
+      socket.off('setUsers');
+    };
+  }, []);
 
   return (
+    mounted &&(
     <div className={[styles.lobby_wrapper, styles.noDrag].join(" ")}>
       <Table striped bordered hover width={'600px'}>
           <thead>
             <div className={styles.lobby_wrapper}>
-              <tr>
-                  <h2>Users (8/8)</h2>
-              </tr>
+              <h2>{getRoom()}번방 ({userCount}/8)</h2>
             </div>
           </thead>
           <tbody>
-            <tr>
-              <th>Joan Andrews</th>
-            </tr>
-            <tr>
-              <th>Jose Anderson</th>
-            </tr>
-            <tr>
-              <th>Phil Aaron</th>
-            </tr>
-            <tr>
-              <th>Samatha Brown</th>
-            </tr>
-            <tr>
-              <th>Chris Baker</th>
-            </tr>
-            <tr>
-              <th>Kristin Blues</th>
-            </tr>
-            <tr>
-              <th>Adam Carter</th>
-            </tr>
-            <tr>
-              <th>Greg Campbell</th>
-            </tr>
-        </tbody>
+            {userList.map((user, index) => (
+              <tr key={index}>
+                <th>{user}</th>
+              </tr>
+            ))}
+          </tbody>
+        <br></br>
       </Table>
       <div>
-        <button className={styles.lobby_form_button} onClick={gameStart} style={{margin:'10px'}}>게임 시작</button>
+        {isSuDo && <button className={styles.lobby_form_button} onClick={gameStart} style={{margin:'10px'}}>게임 시작</button>}
         <button className={styles.lobby_form_button} onClick={gameQuit} style={{margin:'10px'}}>나가기</button>
       </div>
     </div>
-  );
+  ));
 };
 export default _roomForm;

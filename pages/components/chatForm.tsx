@@ -1,59 +1,67 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Chat.module.css'; // CSS 모듈 import
-import { io, Socket } from "socket.io-client";
-
-export let socket: Socket;
+import { getSocket } from '../utils/ClientSocket'; // Socket.ts 파일에서 getSocket 함수를 import
+import { getRoom } from '../utils/Room'; 
 
 const _chatForm: React.FC = () => {
-  if (socket == null)
-  {
-    socket = io("http://localhost:3001", { transports: ["websocket"] });
-  }
+  const socket = getSocket(); // Socket 가져오는 함수 사용
 
   const [message, setMessage] = useState('');
-  const [receivedMessage, setReceivedMessage] = useState('');
+  const [receivedMessages, setReceivedMessages] = useState<string[]>([]);
 
   function handleSendClick() {
     if (message.trim() != ''){
-      socket.emit('message', message);
+      socket.emit('message', getRoom(), message);
       setMessage('');
     }
   }
 
   useEffect(() => {
-    socket.on('message', (data: string) => {
-      setReceivedMessage(data);
+    socket.on('message', (roomId: any, data: string) => {
+      if (roomId == getRoom()){
+        setReceivedMessages(prevMessages => [...prevMessages, data]);
+      }
     });
     return () => {
       socket.off('message');
     };
   }, []);
+    
+  // 메시지가 업데이트될 때마다 스크롤을 최하단으로 이동
+  useEffect(() => {
+    const chatHistory = document.getElementById('chat-history');
+    if (chatHistory) {
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+  }, [receivedMessages]);
+  
 
   // TODO
-  // 1. 데이터 받을 때마다 p 없데이트 하는거
-  // 2. div incoming msg에 스크롤
-  // @. DATE TO NICKNAME
+  // @. DATE TO NICKNAME -> DB에서 가져와야 하기 때문에 후순위
   // @. 채널 분류 및 소켓 분류
+  // @. 비속어 필터링 -> client side 왜? 서버 부하 줄이려고, 요즘 클라 컴터 좋다!
   return (
     <div className={styles.messaging}>
       <div className={styles.inbox_msg}>
         <div className={styles.mesgs}>
-          <div className={styles.msg_history}>
+          <div className={styles.msg_history} id='chat-history'>
             {/* Message history items */}
             {/* Example of incoming message */}
-            <div className={styles.incoming_msg}>
-              <div className={styles.received_msg}>
-                <div className={styles.received_withd_msg}>
-                  <p>{receivedMessage}</p> {/* 서버로부터 받은 메시지 출력 */}
-                  <span className={styles.time_date}> TODO : date to nickname change </span>
+            {receivedMessages.map((msg, index) => (
+              <div key={index} className={styles.incoming_msg}>
+                <div className={styles.received_msg}>
+                  <div className={styles.received_withd_msg}>
+                    <p>{msg}</p>
+                    <span className={styles.time_date}> TODO : date to nickname change </span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
             {/* End of message history items */}
           </div>
           <div className={styles.type_msg}>
             <div className={styles.input_msg_write}>
-              <input type="text" className={styles.write_msg} placeholder="Type a message" value={message} onChange={(e) => setMessage(e.target.value)}/>
+              <input type="text" className={styles.write_msg} placeholder="Type a message" value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') {handleSendClick();}}}/>
               <button className={styles.msg_send_btn} type="button" onClick={handleSendClick}><i className="fa fa-paper-plane-o" aria-hidden="true"></i></button>
             </div>
           </div>
