@@ -23,9 +23,7 @@ const Lobby: React.FC = () => {
     socket.emit('joinLobby');
 
     socket.on('changeRoom', async (roomId: number) => {
-      console.log('roomId : ',roomId);
       await setRoom(roomId);
-      console.log(getRoom(), ' << roomnumber');
     });
 
     socket.on('reloadRoom', (roomId: number, func: string, admin: string, members: number) => {
@@ -73,7 +71,6 @@ const Lobby: React.FC = () => {
     socket.on('SuccessJoinRoom', (roomId: number) => {
       setRoom(roomId);
       router.push('../room');
-      console.log('방 전환 : ',getRoom());
     });
 
     socket.on('reloadLobby', (msg: []) => {
