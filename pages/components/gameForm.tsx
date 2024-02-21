@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Game.module.css'; // CSS 모듈 import
 import { useRouter } from 'next/router';
+import { getSocket } from '../utils/ClientSocket'; // Socket.ts 파일에서 getSocket 함수를 import
+import { getRoom, setRoom } from '../utils/Room'; 
 
 const _gameForm: React.FC = () => {
   const router = useRouter();
+  const socket = getSocket(); 
 
   // 게임 나가기 핸들러
   const gameQuit = () => {
+    socket.emit('quitGame', getRoom());
+    setRoom(0);
     router.push('../lobby');
-    console.log("게임 나가기");
  };
-
-  // 방 참가자 리로드 요소
-  // 변화가 있으면? useEffect에서? 동작을 정의한다?
-  var userName = "";
-  
-  useEffect(() => {
-    console.log("실행할 내용, 아래 []로 변수가 들어감.");
-  }, [userName]);
 
   return (
     <div className={[styles.game_wrapper, styles.noDrag].join(" ")}>

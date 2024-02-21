@@ -2,6 +2,7 @@ const Mutex = require('async-mutex').Mutex;
 const mutex = new Mutex();
 
 let room: number = -1;
+let su: boolean = false;
 
 export function getRoom(): number {
     return room;

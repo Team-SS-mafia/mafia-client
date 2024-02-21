@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/Chat.module.css'; // CSS 모듈 import
 import { getSocket } from '../utils/ClientSocket'; // Socket.ts 파일에서 getSocket 함수를 import
+import { getRoom } from '../utils/Room'; 
 
 const _chatForm: React.FC = () => {
   const socket = getSocket(); // Socket 가져오는 함수 사용
@@ -10,14 +11,16 @@ const _chatForm: React.FC = () => {
 
   function handleSendClick() {
     if (message.trim() != ''){
-      socket.emit('message', message);
+      socket.emit('message', getRoom(), message);
       setMessage('');
     }
   }
 
   useEffect(() => {
-    socket.on('message', (data: string) => {
-      setReceivedMessages(prevMessages => [...prevMessages, data]);
+    socket.on('message', (roomId: any, data: string) => {
+      if (roomId == getRoom()){
+        setReceivedMessages(prevMessages => [...prevMessages, data]);
+      }
     });
     return () => {
       socket.off('message');
