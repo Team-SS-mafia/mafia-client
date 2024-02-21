@@ -5,11 +5,11 @@ import { useRouter } from 'next/router';
 import { getSocket } from '../utils/ClientSocket'; // Socket.ts 파일에서 getSocket 함수를 import
 import { getRoom, setRoom } from '../utils/Room'; 
 
-// TODO 
-
 const _roomForm: React.FC = () => {
   const router = useRouter();
   const socket = getSocket(); 
+
+  console.log(getRoom());
 
   // 게임 시작 핸들러
   const gameStart = () => {
@@ -18,20 +18,41 @@ const _roomForm: React.FC = () => {
  };
    
  // 게임 나가기 핸들러
-  const gameQuit = () => {
-    router.push('../lobby');
+  const gameQuit = async () => {
     console.log("게임 나가기");
     socket.emit('quitRoom', getRoom());
     setRoom(0);
-    console.log(getRoom());
+    await router.push('../lobby');
  };
+
 
  // html 매칭 에러
  // 렌더링 후 상태 업데이트하는 방식
   const [mounted, setMounted] = useState<boolean>(false);
 
+  const [userList, setUserList] = useState<string[]>([]);
+
   useEffect(() => {
     setMounted(true);
+    
+    // 들어가자마자 실행될 reload
+    // TODO
+    socket.emit('joinUser', getRoom());
+
+    // 이후에 user list 갱신
+    socket.on('setUsers', (users: string[]) => {
+      setUserList(users);
+    });
+
+    // 이후에 user list 갱신
+    socket.on('reloadUser', (users: string) => {
+      // TODO
+    });
+
+    // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
+    return () => {
+      socket.off('reloadUser');
+    };
   }, []);
 
   return (
@@ -44,31 +65,12 @@ const _roomForm: React.FC = () => {
             </div>
           </thead>
           <tbody>
-            <tr>
-              <th>Joan Andrews</th>
-            </tr>
-            <tr>
-              <th>Jose Anderson</th>
-            </tr>
-            <tr>
-              <th>Phil Aaron</th>
-            </tr>
-            <tr>
-              <th>Samatha Brown</th>
-            </tr>
-            <tr>
-              <th>Chris Baker</th>
-            </tr>
-            <tr>
-              <th>Kristin Blues</th>
-            </tr>
-            <tr>
-              <th>Adam Carter</th>
-            </tr>
-            <tr>
-              <th>Greg Campbell</th>
-            </tr>
-        </tbody>
+            {userList.map((user, index) => (
+              <tr key={index}>
+                <th>{user}</th>
+              </tr>
+            ))}
+          </tbody>
         <br></br>
       </Table>
       <div>
