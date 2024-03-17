@@ -8,6 +8,13 @@ const _gameForm: React.FC = () => {
   const router = useRouter();
   const socket = getSocket(); 
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      router.push('../login');
+    }
+  }, []);
+
   // 게임 나가기 핸들러
   const gameQuit = () => {
     socket.emit('quitGame', getRoom());

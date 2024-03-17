@@ -26,13 +26,20 @@ const _roomForm: React.FC = () => {
   // 일단 모두 다 true 줘서 게임 시작 보이게 해둠.
   const [isSuDo, setIsSuDo] = useState<boolean>(true);
 
- // html 매칭 에러
- // 렌더링 후 상태 업데이트하는 방식
+  // html 매칭 에러
+  // 렌더링 후 상태 업데이트하는 방식
   const [mounted, setMounted] = useState<boolean>(false);
 
   const [userList, setUserList] = useState<string[]>([]);
 
   const [userCount, setUserCount] = useState<number>();
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      router.push('../login');
+    }
+  }, []);
 
   useEffect(() => {
     setMounted(true);

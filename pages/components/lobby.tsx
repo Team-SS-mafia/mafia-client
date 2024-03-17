@@ -19,6 +19,13 @@ const Lobby: React.FC = () => {
   }
 
   useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      router.push('../login');
+    }
+  }, []);
+
+  useEffect(() => {
     socket.emit('joinLobby');
 
     socket.on('changeRoom', async (roomId: number) => {

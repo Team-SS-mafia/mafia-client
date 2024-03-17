@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../../styles/User.module.css'; // CSS 모듈 import
 import { useRouter } from 'next/router';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -6,6 +6,13 @@ import { CreateUserDto } from '../dto/create-user.dto';
 const _createForm: React.FC = () => {
   const router = useRouter();
   const [errAlert, setErrAlert] = useState<string>('');
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+      router.push('../lobby');
+    }
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // 폼 기본 동작 방지
